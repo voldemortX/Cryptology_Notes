@@ -1,2 +1,2 @@
 # Cryptology_Notes
-Implementations of 
+Implementations of algorithms mentioned in class.
