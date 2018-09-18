@@ -1,3 +1,5 @@
+#ifndef des_parameters_h
+#define des_parameters_h
 const int blockSize = 64;
 const int keySize = 56;
 const int subkeySize = 48;
@@ -236,3 +238,5 @@ int P[] = {16,  7, 20, 21,
 		   19, 13, 30,  6,
 
 		   22, 11,  4, 25 };
+		   
+#endif
