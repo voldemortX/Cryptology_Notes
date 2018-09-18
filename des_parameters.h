@@ -3,6 +3,9 @@
 const int blockSize = 64;
 const int keySize = 56;
 const int subkeySize = 48;
+const int roundNum = 16;
+// pBoxes starts from 1
+// sBoxes starts from 0 
 // ≥ı º÷√ªª±Ì
 
 int IP[] = {58, 50, 42, 34, 26, 18, 10, 2,
