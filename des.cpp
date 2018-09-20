@@ -1,3 +1,4 @@
+// functions checked by http://tool.chacuo.net/cryptdes
 #include <bitset>
 #include <iostream>
 #include "des_parameters.h"
@@ -25,9 +26,9 @@ bitset<outSize> substitution(bitset<inSize> block, int sBox[][sHeight][sWidth])
 	{
 		int p1 = block[i * inLen] + 2 * block[(i + 1) * inLen - 1];
 		int p2 = block[i * inLen + 1] + block[i * inLen + 2] * 2 + block[i * inLen + 3] * 4 + block[i * inLen + 4] * 8;
-		//cout << " p1: " << p1 << " p2: "<< p2 << endl;
+		////cout << " p1: " << p1 << " p2: "<< p2 << endl;
 		bitset<outSize> temp(sBox[parts - i - 1][p1][p2]);
-		//cout << temp << endl;
+		////cout << temp << endl;
 		temp <<= outLen * i;
 		processed |= temp;
 	}
@@ -41,10 +42,15 @@ void f(bitset<blockSize / 2>* l0, bitset<blockSize / 2>* r0, bitset<subkeySize> 
 	const int half = blockSize / 2;
 	bitset<half> l1 = *r0;
 	bitset<subkeySize> tr1 = permutation<half, subkeySize>(*r0, E);  // E permutation(32->48)
+	//cout << "after E  : " << tr1 << endl;
 	tr1 ^= subkey;  // xor round key
+	//cout << "after xor: " << tr1 << endl;
 	bitset<half> r1 = substitution<subkeySize, half, 4, 16, 8>(tr1, S_BOX);  // S-Box
+	//cout << "after S  : " << r1 << endl;
 	r1 = permutation<half, half>(r1, P);  // P-Box
+	//cout << "after P  : " << r1 << endl;
 	r1 ^= *l0;  // xor l0
+	//cout << "after xorl:" << r1 << endl;
 	// return values
 	*l0 = l1;
 	*r0 = r1;
@@ -105,7 +111,13 @@ bitset<blockSize> encryption(bitset<blockSize> block, bitset<subkeySize>* subkey
 	// 16 rounds
 	if(flag)  // encryption
 		for(int i = 0; i < roundNum; ++i)
+		{
 			f(&left, &right, subkeys[i]);  // SPN-round-function
+			//cout << "after round " << i << ":" << endl; 
+			//cout << " l: " << left << endl;
+			//cout << " r: " << right << endl;
+			//cout << endl;
+		}
 	else  // decryption
 		for(int i = roundNum - 1; i >= 0; --i)
 			f(&left, &right, subkeys[i]);  // SPN-round-function
