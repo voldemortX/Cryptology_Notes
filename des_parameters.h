@@ -4,6 +4,7 @@ const int blockSize = 64;
 const int keySize = 56;
 const int subkeySize = 48;
 const int roundNum = 16;
+const int blockBytes = 8;
 // pBoxes starts from 1
 // sBoxes starts from 0 
 // ≥ı º÷√ªª±Ì

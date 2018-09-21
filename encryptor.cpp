@@ -1,3 +1,9 @@
+/*
+Knowledge I pursue, not efficiency. 
+#environment#
+CPU:    Intel i5-6300HQ(2.30GHz)
+Memory: 4G*2 
+*/
 #include <iostream>
 #include <bitset>
 #include <string>
@@ -7,8 +13,10 @@
 #include "des_parameters.h"
 using namespace std;
 
+
 void reverse(char *s, int n)
 {
+	// looks like the best one I found
 	int i;
 	char t;
 	for(i=0; i<=n/2; i++)
@@ -28,9 +36,41 @@ void reverseCopy(t1 in, t2 out, int n)
 	memcpy(out, temp, n);
 }
 
-bool des_cbc(char* in, char* out, long long numPkt, string op, bitset<subkeySize>* subkeys)
+bool des_cbc(char* in, char* out, long long numPkt, string op, bitset<subkeySize>* subkeys, string IV)
 {
+	if(IV.size() < blockBytes)
+		return false;
+	bitset<blockSize> salt;  // feed
+	reverseCopy<const char*, bitset<blockSize>*>(IV.c_str(), &salt, blockBytes);
+	for(long long i = 0; i < numPkt; ++i)
+	{
+		if(i % 128 == 0)
+		{
+			cout << (double)(i+1) / numPkt * 100 << "%" << endl;
+		}
+		bitset<blockSize> pkt;
+		reverseCopy<char*, bitset<blockSize>*>(in + i * blockBytes, &pkt, blockBytes);
+		if(op == "encrypt")
+		{
+			pkt ^= salt;
+			pkt = encrypt(pkt, subkeys);
+			salt = pkt;
+			//cout << "en: " << pkt << endl;
+		}
+		else if(op == "decrypt")
+		{
+			bitset<blockSize> temp = pkt;
+			pkt = decrypt(pkt, subkeys);
+			pkt ^= salt;
+			salt = temp;
+			//cout << "de: " << pkt << endl;
+		}
+		else
+			return false;
+		reverseCopy<bitset<blockSize>*, char*>(&pkt, out + i * blockBytes, blockBytes);
 	
+	}
+	return true;
 }
 
 bool des_ecb(char* in, char* out, long long numPkt, string op, bitset<subkeySize>* subkeys)
@@ -40,23 +80,23 @@ bool des_ecb(char* in, char* out, long long numPkt, string op, bitset<subkeySize
 	{
 		if(i % 128 == 0)
 		{
-			cout << (double)i / numPkt * 100 << "%" << endl;
+			cout << (double)(i+1) / numPkt * 100 << "%" << endl;
 		}
 		bitset<blockSize> pkt;
-		reverseCopy<char*, bitset<blockSize>*>(in + i * 8, &pkt, 8);
+		reverseCopy<char*, bitset<blockSize>*>(in + i * blockBytes, &pkt, blockBytes);
 		if(op == "encrypt")
 		{
-			 pkt = encrypt(pkt, subkeys);
-			 //cout << "en: " << pkt << endl;
+			pkt = encrypt(pkt, subkeys);
+			//cout << "en: " << pkt << endl;
 		}
 		else if(op == "decrypt")
 		{
-			 pkt = decrypt(pkt, subkeys);
-			 //cout << "de: " << pkt << endl;
+			pkt = decrypt(pkt, subkeys);
+			//cout << "de: " << pkt << endl;
 		}
 		else
 			return false;
-		reverseCopy<bitset<blockSize>*, char*>(&pkt, out + i * 8, 8);
+		reverseCopy<bitset<blockSize>*, char*>(&pkt, out + i * blockBytes, blockBytes);
 	
 	}
 	return true;
@@ -66,22 +106,22 @@ bool des(string inputFilename, string outputFilename, string key, string mode, s
 {
 	bool status = false;
 	ifstream inputFile(inputFilename, ios::binary);
-	if((inputFile != NULL) && (key.size() >= 8))
+	if((inputFile != NULL) && (key.size() >= blockBytes))
 	{
 		inputFile.seekg(0, ios::end);
 		long long e = inputFile.tellg();
 		inputFile.seekg(0, ios::beg);
 		long long s = inputFile.tellg();
 		long long len = e - s;
-		long long numPkt = len / 8;
-		long long numPad = 8 - len % 8;
+		long long numPkt = len / blockBytes;
+		long long numPad = blockBytes - len % blockBytes;
 		cout << "numpad: " << numPad << " len:" << len << endl;
-		char* in = (char*)malloc(sizeof(char)*(len + 16));
-		char* out = (char*)malloc(sizeof(char)*(len + 16));
+		char* in = (char*)malloc(sizeof(char)*(len + blockBytes * 2));
+		char* out = (char*)malloc(sizeof(char)*(len + blockBytes * 2));
 		inputFile.read(in, len);
 		inputFile.close();
 		bitset<blockSize> rawkey;
-		reverseCopy<const char*, bitset<blockSize>*>(key.c_str(), &rawkey, 8);
+		reverseCopy<const char*, bitset<blockSize>*>(key.c_str(), &rawkey, blockBytes);
 		bitset<subkeySize> subkeys[roundNum];
 		keyGeneration(subkeys, rawkey);
 		
@@ -99,6 +139,10 @@ bool des(string inputFilename, string outputFilename, string key, string mode, s
 		
 		if(mode == "ecb" || mode == "ECB")	
 			status = des_ecb(in, out, numPkt, op, subkeys);
+		else if(mode == "cbc" || mode == "CBC")
+			status = des_cbc(in, out, numPkt, op, subkeys, IV);
+		else
+			return false;
 		
 		// pkcs5 padding
 		if(op == "decrypt")

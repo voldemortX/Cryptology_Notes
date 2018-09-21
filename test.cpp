@@ -46,10 +46,10 @@ int main()
 	cout << k << endl;
 	cout << kk << endl; 
 	*/	
-	bool x = des("1.txt", "111.txt", "abcdefgh", "ECB", "encrypt", "");
+	bool x = des("1.txt", "111.txt", "abcdefgh", "cbc", "encrypt", "Junoscock");
 	if(x)
 		cout << "En done!" << endl;
-	x = des("111.txt", "1111.txt", "abcdefgh", "ECB", "decrypt", "");
+	x = des("111.txt", "1111.txt", "abcdefgh", "cbc", "decrypt", "Junoscock");
 	if(x)
 		cout << "De done!" << endl;
 	
