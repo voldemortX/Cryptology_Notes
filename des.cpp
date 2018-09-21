@@ -99,7 +99,7 @@ void keyGeneration(bitset<subkeySize>* subkeys, bitset<blockSize> rawkey)
 bitset<blockSize> encryption(bitset<blockSize> block, bitset<subkeySize>* subkeys, bool flag)
 {
 	block = permutation<blockSize, blockSize>(block, IP);  // initial permutation
-	
+	//cout << "IPed: " << block << endl;
 	// divide
 	const int half = blockSize / 2; 
 	bitset<half> left, right;
