@@ -36,8 +36,48 @@ void reverseCopy(t1 in, t2 out, int n)
 	memcpy(out, temp, n);
 }
 
+bool des_cfb64(char* in, char* out, long long numPkt, string op, bitset<subkeySize>* subkeys, string IV)
+{
+	// about 80KBps
+	if(IV.size() < blockBytes)
+		return false;
+		
+	bitset<blockSize> salt;  // feed
+	reverseCopy<const char*, bitset<blockSize>*>(IV.c_str(), &salt, blockBytes);
+	for(long long i = 0; i < numPkt; ++i)
+	{
+		if(i % 128 == 0)
+		{
+			cout << (double)(i+1) / numPkt * 100 << "%" << endl;
+		}
+		bitset<blockSize> pkt;
+		reverseCopy<char*, bitset<blockSize>*>(in + i * blockBytes, &pkt, blockBytes);
+		if(op == "encrypt")
+		{
+			salt = encrypt(salt, subkeys);;
+			pkt ^= salt; 
+			salt = pkt;
+			//cout << "en: " << pkt << endl;
+		}
+		else if(op == "decrypt")
+		{
+			bitset<blockSize> temp = pkt;
+			salt = encrypt(salt, subkeys);
+			pkt ^= salt;
+			salt = temp;
+			//cout << "de: " << pkt << endl;
+		}
+		else
+			return false;
+		reverseCopy<bitset<blockSize>*, char*>(&pkt, out + i * blockBytes, blockBytes);
+	
+	}
+	return true;
+}
+
 bool des_cbc(char* in, char* out, long long numPkt, string op, bitset<subkeySize>* subkeys, string IV)
 {
+	// about 76KBps
 	if(IV.size() < blockBytes)
 		return false;
 	bitset<blockSize> salt;  // feed
@@ -141,6 +181,8 @@ bool des(string inputFilename, string outputFilename, string key, string mode, s
 			status = des_ecb(in, out, numPkt, op, subkeys);
 		else if(mode == "cbc" || mode == "CBC")
 			status = des_cbc(in, out, numPkt, op, subkeys, IV);
+		else if(mode == "cfb" || mode == "CFB")
+			status = des_cfb64(in, out, numPkt, op, subkeys, IV);  // just CFB-64
 		else
 			return false;
 		
