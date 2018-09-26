@@ -4,6 +4,7 @@ import java.util.Random;
 
 public class PrimeGenerator 
 {
+	// quite fast
 	private BigInteger prime;
 	private Random random;
 	private static final int keyLen = 1024;
@@ -14,6 +15,21 @@ public class PrimeGenerator
 		this.random = new Random(seed);
 		
 		
+	}
+	
+	private BigInteger quickPowMod(BigInteger x, BigInteger n, BigInteger p)
+	{
+		// quick pow (mod p)
+		BigInteger ans = new BigInteger("1");
+		while(n.compareTo(BigInteger.ZERO) > 0)
+		{
+			if(n.and(BigInteger.ONE).equals(BigInteger.ONE))
+				ans = ans.multiply(x).mod(p);
+			x = x.multiply(x).mod(p);
+			n = n.shiftRight(1);
+		}
+		
+		return ans; 
 	}
 	
 	private boolean MR(BigInteger x)
@@ -36,7 +52,8 @@ public class PrimeGenerator
 			BigInteger a = new BigInteger(PrimeGenerator.keyLen, random);
 			a = a.mod(x.subtract(BigInteger.ONE)).add(BigInteger.ONE);
 			//System.out.println("a: " + a);
-			BigInteger x0 = a.modPow(u, x);
+			BigInteger x0 = this.quickPowMod(a, u, x);
+			//BigInteger x0 = a.modPow(u, x);
 			BigInteger x1 = x0;
 			
 			// test x by a
@@ -85,6 +102,10 @@ public class PrimeGenerator
 		// TODO Auto-generated method stub
 		PrimeGenerator test = new PrimeGenerator(98);
 		System.out.println(test.getPrime());
+		/*BigInteger a1 = new BigInteger("2");
+		BigInteger a2 = new BigInteger("10");
+		BigInteger a3 = new BigInteger("1020");
+		System.out.println(test.quickPowMod(a1, a2, a3));*/
 		
 	}
 	
