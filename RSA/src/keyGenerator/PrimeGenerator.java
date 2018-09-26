@@ -7,7 +7,7 @@ public class PrimeGenerator
 	private BigInteger prime;
 	private Random random;
 	private static final int keyLen = 1024;
-	private static final int s = 20;
+	private static final int s = 50;
 	
 	PrimeGenerator(int seed)
 	{
@@ -57,7 +57,7 @@ public class PrimeGenerator
 	
 	public BigInteger getPrime()
 	{
-		/*int count = 0;
+		int count = 0;
 		while(true)
 		{
 			++count;
@@ -72,18 +72,18 @@ public class PrimeGenerator
 				break;
 		}
 		
-		return this.prime;*/
-		BigInteger tt = new BigInteger("25");  // 100101
+		return this.prime;
+		/*BigInteger tt = new BigInteger("25");  // 100101
 		if(this.MR(tt))
 			return tt;
 		else
-			return BigInteger.ZERO;
+			return BigInteger.ZERO;*/
 	}
 	
 	public static void main(String[] args) 
 	{
 		// TODO Auto-generated method stub
-		PrimeGenerator test = new PrimeGenerator(25);
+		PrimeGenerator test = new PrimeGenerator(98);
 		System.out.println(test.getPrime());
 		
 	}
