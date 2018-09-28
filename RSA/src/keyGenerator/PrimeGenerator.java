@@ -7,17 +7,22 @@ public class PrimeGenerator
 	// quite fast
 	private BigInteger prime;
 	private Random random;
-	private static final int keyLen = 1024;
-	private static final int s = 50;
+	public static final int keyLen = 1024;
+	public static final int s = 50;
 	
 	PrimeGenerator(int seed)
 	{
 		this.random = new Random(seed);
 		
+	}
+	
+	PrimeGenerator(long seed)
+	{
+		this.random = new Random(seed);
 		
 	}
 	
-	private BigInteger quickPowMod(BigInteger x, BigInteger n, BigInteger p)
+	public static BigInteger quickPowMod(BigInteger x, BigInteger n, BigInteger p)
 	{
 		// quick pow (mod p)
 		BigInteger ans = new BigInteger("1");
@@ -52,7 +57,7 @@ public class PrimeGenerator
 			BigInteger a = new BigInteger(PrimeGenerator.keyLen, random);
 			a = a.mod(x.subtract(BigInteger.ONE)).add(BigInteger.ONE);
 			//System.out.println("a: " + a);
-			BigInteger x0 = this.quickPowMod(a, u, x);
+			BigInteger x0 = PrimeGenerator.quickPowMod(a, u, x);
 			//BigInteger x0 = a.modPow(u, x);
 			BigInteger x1 = x0;
 			
