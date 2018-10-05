@@ -80,7 +80,7 @@ public class PairKeyGenerator
 		else
 			return PairKeyGenerator.gcd(b, a.mod(b));
 	}
-	
+	/*
 	public static void main(String[] args) 
 	{
 		// TODO Auto-generated method stub
@@ -91,5 +91,5 @@ public class PairKeyGenerator
 		System.out.println(res[1]);
 		System.out.println(res[2]);
 	}
-
+	*/
 }

@@ -79,6 +79,7 @@ public class PrimeGenerator
 	
 	public BigInteger getPrime()
 	{
+		System.out.println("Finding prime...");
 		int count = 0;
 		while(true)
 		{
@@ -87,13 +88,13 @@ public class PrimeGenerator
 			this.prime = new BigInteger(PrimeGenerator.keyLen, this.random);
 			this.prime = this.prime.or(BigInteger.ONE.shiftLeft(PrimeGenerator.keyLen));
 			this.prime = this.prime.or(BigInteger.ONE);
-			System.out.println(count);
+			//System.out.println(count);
 				
 			// prime test
 			if(this.MR(this.prime))
 				break;
 		}
-		
+		System.out.println("found a prime after " + count + " counts!");
 		return this.prime;
 		/*BigInteger tt = new BigInteger("25");  // 100101
 		if(this.MR(tt))
@@ -101,19 +102,19 @@ public class PrimeGenerator
 		else
 			return BigInteger.ZERO;*/
 	}
-	
+	/*
 	public static void main(String[] args) 
 	{
 		// TODO Auto-generated method stub
 		PrimeGenerator test = new PrimeGenerator(98);
 		System.out.println(test.getPrime());
-		/*BigInteger a1 = new BigInteger("2");
-		BigInteger a2 = new BigInteger("10");
-		BigInteger a3 = new BigInteger("1020");
-		System.out.println(test.quickPowMod(a1, a2, a3));*/
+		//BigInteger a1 = new BigInteger("2");
+		//BigInteger a2 = new BigInteger("10");
+		//BigInteger a3 = new BigInteger("1020");
+		//System.out.println(test.quickPowMod(a1, a2, a3));
 		
 	}
-	
+	*/
 	
 
 }
