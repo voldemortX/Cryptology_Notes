@@ -1,5 +1,5 @@
 # Fundamentals of cryptology 
-Simple implementations of DES, RSA, MD5
+Simple implementations of DES, RSA, MD5, Stream Cipher
 
 ***Codes are self-explanatory with detailed comments***
 
@@ -17,5 +17,10 @@ Takes ~25 seconds to generate a pair of private&public keys
 Implemented a variation of MD5(*Results are somewhat inconsistent with popular implementations*) based on C++ library **bitset**
 
 A popular implementation by bit-wise operations are included as **md5_std.cpp**
+
+## 4. Stream ciphers on JPEG by C++
+Implemented various stream ciphers to encode JPEG while retaining it's file format
+
+Encoded only the DC coefficients
 
 ***All codes simply aim to build an understanding of basic cryptology, thus not recommended for practical use***
